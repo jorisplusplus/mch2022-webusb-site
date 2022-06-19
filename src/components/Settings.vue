@@ -66,30 +66,32 @@
         },
         methods: {
             update_local_apps: async () => {
-                let install_paths = ['/flash/apps'];
+                let config_path = '/flash/config';
                 let configurable_apps = [];
-
-                for(let path of install_paths) {
-                    let dir = await fetch_dir(path);
-                    let dir_contents = dir.split('\n');
-                    for (let item of dir_contents) {
-                        if(item[0] !== 'd') { continue; }
-                        let app_slug = item.substr(1);
-                        let contents;
-                        try {
-                            contents = await readfile('/flash/config/app-' + app_slug + '.json');
-                            if(contents !== undefined && contents.length)
-                            {
-                                configurable_apps.push(app_slug);
-                                try {
-                                    component.configs[app_slug] = JSON.parse(contents);
-                                } catch {
-                                    component.configs[app_slug] = {}
-                                }
+                let dir = await fetch_dir(config_path);
+                let dir_contents = dir.split('\n');
+                for (let item of dir_contents) {
+                    if(item[0] !== 'f') { continue; }
+                    let filename = item.substr(1);
+                    if(!filename.endsWith(".json")) {continue; }
+                    if(!filename.startsWith("app-")) {continue; }
+                    let app_slug = filename.substring(4, filename.length-5);
+                    console.log("Appconfig found: "+app_slug);
+                    let contents;
+                    try {
+                        contents = await readfile(config_path+"/"+filename);
+                        if(contents !== undefined && contents.length)
+                        {
+                            configurable_apps.push(app_slug);
+                            try {
+                                component.configs[app_slug] = JSON.parse(contents);
+                            } catch {
+                                component.configs[app_slug] = {}
                             }
-                        } catch { let do_nothing = 1; do_nothing++; }
-                    }
+                        }
+                    } catch { let do_nothing = 1; do_nothing++; }
                 }
+                
 
                 component.app_slugs = configurable_apps;
             },
