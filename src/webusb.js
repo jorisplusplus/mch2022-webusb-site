@@ -343,16 +343,16 @@ var _appendBuffer = function(buffer1, buffer2) {
 
 let readdata = () => {
     device.transferIn(5, 64).then(result => {
-        console.log("Received buffer")
-        console.log(result.data.buffer);
+        //console.log("Received buffer")
+        //console.log(result.data.buffer);
         let buffer = result.data.buffer;
         if (headerbuf != null) {
             buffer = _appendBuffer(headerbuf, buffer);
         }
         let parsedbytes = 0;
         let totalbytes = buffer.byteLength;
-        console.log("Complete buffer")
-        console.log(buffer);
+        //console.log("Complete buffer")
+        //console.log(buffer);
         while (parsedbytes != totalbytes) {
             if (received == size) { //Should read a new packet header
                 if ((totalbytes - parsedbytes) < 12) {
@@ -480,13 +480,13 @@ export function connect() {
             value: 0x01,
             index: interfaceid
         })) // Ready to receive data
-        .then(() => device.controlTransferOut({
-            requestType: 'class',
-            recipient: 'interface',
-            request: 0x23,
-            value: 0x00,
-            index: interfaceid
-        })) // Ready to receive data
+        // .then(() => device.controlTransferOut({
+        //     requestType: 'class',
+        //     recipient: 'interface',
+        //     request: 0x23,
+        //     value: 0x00,
+        //     index: interfaceid
+        // })) // Ready to receive data
         .then(() => device.controlTransferOut({
             requestType: 'class',
             recipient: 'interface',
